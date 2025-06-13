@@ -29,9 +29,15 @@ jobs:
       run: |
         git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/gjame77/flask-k8s-deploy.git
         cd flask-k8s-deploy
+
         sed -i 's|newTag:.*|newTag: latest|' kustomization.yaml
+
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git commit -am "Update image tag"
-        git push
 
+        if ! git diff --quiet; then
+          git commit -am "Update image tag to latest"
+          git push
+        else
+          echo "No changes to commit."
+        fi
